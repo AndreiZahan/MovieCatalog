@@ -61,7 +61,7 @@ public class MovieController {
         return movieService.getMovies();
     }
 
-    @GetMapping("/movie/{id}")
+    @GetMapping("/movie-{id}")
     public Movie findMovieById(@PathVariable Integer id) {
         return movieService.getMovieById(id);
     }

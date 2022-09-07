@@ -12,7 +12,10 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.MapSolrParams;
+import org.springframework.beans.BeanInstantiationException;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -26,17 +29,41 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-@Component
 public class SolrjConnection {
 
-
-     //Constructor that indexes the entire DB to the solr Admin. Part of it is commented because it does that operation
-     //everytime we run the application.
-
     public SolrjConnection() {
-        /*try {
+        try {
             List<Movie> movies = getJpaQueryFactory().selectFrom(QMovie.movie).fetch();
             System.out.printf("Indexing %d movies...\n", movies.size());
+            for (Movie movie : movies) {
+                if (movie.getYear().contains("–")) {
+                    movie.setYear(movie.getYear().replace("–", ""));
+                }
+                if (movie.getActors().equalsIgnoreCase("N/A")) {
+                    movie.setActors("");
+                }
+                if (movie.getDirector().equalsIgnoreCase("N/A")) {
+                    movie.setDirector("");
+                }
+                if (movie.getGenre().equalsIgnoreCase("N/A")) {
+                    movie.setGenre("");
+                }
+                if (movie.getImdbRating().equalsIgnoreCase("N/A")) {
+                    movie.setImdbRating("");
+                }
+                if (movie.getPlot().equalsIgnoreCase("N/A")) {
+                    movie.setPlot("");
+                }
+                if (movie.getRated().equalsIgnoreCase("N/A")) {
+                    movie.setRated("");
+                }
+                if (movie.getReleased().equalsIgnoreCase("N/A")) {
+                    movie.setReleased("");
+                }
+                if (movie.getWriter().equalsIgnoreCase("N/A") || movie.getWriter().length() > 60) {
+                    movie.setWriter("");
+                }
+            }
             solrClient.addBeans(movies);
 
             solrClient.commit();
@@ -44,7 +71,7 @@ public class SolrjConnection {
             System.out.printf("%d movies indexed.\n", movies.size());
         } catch (SolrServerException | IOException e) {
             System.err.printf("\nFailed to indexing movies: %s", e.getMessage());
-        }*/
+        }
         queryingByUsingSolrParams();
     }
 

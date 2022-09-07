@@ -1,0 +1,33 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/academy/mariadb/data:/var/lib/mysql
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: movies
+      MARIADB_USER: user
+      MARIADB_PASSWORD: password
+
+  solr:
+    image: solr:latest
+    container_name: solr
+    volumes:
+      - data-solr:/var/solr
+    environment:
+      - SOLR_HEAP=2g
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - MovieSolrCore
+    ports:
+      - 8983:8983
+    depends_on:
+      - mariadb
+
+volumes:
+  data-solr:
+
